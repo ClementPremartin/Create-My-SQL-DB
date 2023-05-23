@@ -1,54 +1,68 @@
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS recruiter;
+DROP TABLE IF EXISTS candidate;
+DROP TABLE IF EXISTS company;
+DROP TABLE IF EXISTS offer;
+DROP TABLE IF EXISTS offer_application;
+SET FOREIGN_KEY_CHECKS = 1;
+
 CREATE TABLE `recruiter` (
-	`id` INT NOT NULL AUTO_INCREMENT UNIQUE,
-	`company_id` INT NOT NULL,
-	`email` varchar(250) NOT NULL,
-	`hashedPassword` varchar(250) NOT NULL,
-	PRIMARY KEY (`id`)
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
+	`company_id` INT NOT NULL UNIQUE,
+	`email` varchar(250) NOT NULL UNIQUE,
+	`hashedPassword` varchar(250) NOT NULL
 );
 
 CREATE TABLE `candidate` (
-	`id` INT NOT NULL AUTO_INCREMENT UNIQUE,
-	`email` varchar(250) NOT NULL,
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
+	`email` varchar(250) NOT NULL UNIQUE,
 	`hashed_password` varchar(250) NOT NULL UNIQUE,
 	`lastname` varchar(250) NOT NULL,
 	`firstname` varchar(250) NOT NULL,
 	`phone` varchar(30) NOT NULL UNIQUE,
-	`presentation` varchar(250) NOT NULL,
-	PRIMARY KEY (`id`)
+	`presentation` varchar(250) NOT NULL
 );
 
 CREATE TABLE `company` (
-	`id` INT NOT NULL AUTO_INCREMENT UNIQUE,
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
 	`name` varchar(250) NOT NULL,
-	`description` varchar(250) NOT NULL,
-	PRIMARY KEY (`id`)
+	`description` varchar(250) NOT NULL
 );
 
 CREATE TABLE `offer` (
-	`id` INT NOT NULL AUTO_INCREMENT UNIQUE,
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
 	`company_id` INT NOT NULL,
 	`title` varchar(250) NOT NULL,
 	`description` varchar(250) NOT NULL,
-	`city` varchar(250) NOT NULL,
-	PRIMARY KEY (`id`)
+	`city` varchar(250) NOT NULL
 );
 
-CREATE TABLE `application` (
-	`id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE `offer_application` (
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
 	`candidate_id` INT NOT NULL,
 	`offer_id` INT NOT NULL,
-	PRIMARY KEY (`id`)
+	UNIQUE KEY `candidate_offer_unique_constraint` (`candidate_id`, `offer_id`)
 );
 
 ALTER TABLE `recruiter` ADD CONSTRAINT `recruiter_fk0` FOREIGN KEY (`company_id`) REFERENCES `company`(`id`);
 
-ALTER TABLE `candidate` ADD CONSTRAINT `candidate_fk0` FOREIGN KEY (`id`) REFERENCES `roles`(`id`);
-
 ALTER TABLE `offer` ADD CONSTRAINT `offer_fk0` FOREIGN KEY (`company_id`) REFERENCES `company`(`id`);
 
-ALTER TABLE `application` ADD CONSTRAINT `application_fk0` FOREIGN KEY (`candidate_id`) REFERENCES `candidate`(`id`);
+ALTER TABLE `offer_application` ADD CONSTRAINT `offer_application_fk0` FOREIGN KEY (`candidate_id`) REFERENCES `candidate`(`id`) ON DELETE CASCADE;
 
-ALTER TABLE `application` ADD CONSTRAINT `application_fk1` FOREIGN KEY (`offer_id`) REFERENCES `offer`(`id`);
+ALTER TABLE `offer_application` ADD CONSTRAINT `offer_application_fk1` FOREIGN KEY (`offer_id`) REFERENCES `offer`(`id`) ON DELETE CASCADE;
+
+
+insert into company (id, name, description) values (1, 'Feedfish', 'Saga of Gosta Berling, The (Gösta Berlings saga)');
+insert into company (id, name, description) values (2, 'Photofeed', 'Spanish Fly');
+insert into company (id, name, description) values (3, 'Zooxo', 'Somewhere in the Night');
+insert into company (id, name, description) values (4, 'Thoughtsphere', 'On the Riviera');
+insert into company (id, name, description) values (5, 'Voonte', 'Innocent Sleep, The');
+insert into company (id, name, description) values (6, 'Brainsphere', 'Wu Tang Master (Tian shi zhuang xie)');
+insert into company (id, name, description) values (7, 'Katz', 'Night of the Living Dead');
+insert into company (id, name, description) values (8, 'Latz', 'Viva Zapata!');
+insert into company (id, name, description) values (9, 'Realpoint', 'Grand Theft Parsons');
+insert into company (id, name, description) values (10, 'Cogibox', 'Trance');
 
 insert into recruiter (id, email, hashedPassword, company_id) values (1, 'tkobiera0@acquirethisname.com', 'hXK6XfI8YuV', 1);
 insert into recruiter (id, email, hashedPassword, company_id) values (2, 'mspurge1@ycombinator.com', 'JFZXEx3I8uGH', 2);
@@ -82,17 +96,6 @@ insert into candidate (id, email, hashed_password, lastname, firstname, phone, p
 insert into candidate (id, email, hashed_password, lastname, firstname, phone, presentation) values (19, 'clucasi@netlog.com', 'i372Or2JHGG', 'Lucas', 'Alizée', '373-354-2165', 'National Institute of Development Administration');
 insert into candidate (id, email, hashed_password, lastname, firstname, phone, presentation) values (20, 'mspandleyj@squarespace.com', 'E7SDzl3j', 'Spandley', 'Bécassine', '364-314-6503', 'Qom University');
 
-insert into company (id, name, description) values (1, 'Feedfish', 'Saga of Gosta Berling, The (Gösta Berlings saga)');
-insert into company (id, name, description) values (2, 'Photofeed', 'Spanish Fly');
-insert into company (id, name, description) values (3, 'Zooxo', 'Somewhere in the Night');
-insert into company (id, name, description) values (4, 'Thoughtsphere', 'On the Riviera');
-insert into company (id, name, description) values (5, 'Voonte', 'Innocent Sleep, The');
-insert into company (id, name, description) values (6, 'Brainsphere', 'Wu Tang Master (Tian shi zhuang xie)');
-insert into company (id, name, description) values (7, 'Katz', 'Night of the Living Dead');
-insert into company (id, name, description) values (8, 'Latz', 'Viva Zapata!');
-insert into company (id, name, description) values (9, 'Realpoint', 'Grand Theft Parsons');
-insert into company (id, name, description) values (10, 'Cogibox', 'Trance');
-
 insert into offer (id, company_id, title, description, city) values (1, 1, 'VP Quality Control', 'Curabitur convallis.', 'Çepan');
 insert into offer (id, company_id, title, description, city) values (2, 1, 'Analyst Programmer', 'Pellentesque at nulla.', 'La Goulette');
 insert into offer (id, company_id, title, description, city) values (3, 1, 'Senior Quality Engineer', 'Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.', 'Paris 12');
@@ -124,36 +127,36 @@ insert into offer (id, company_id, title, description, city) values (28, 10, 'Ph
 insert into offer (id, company_id, title, description, city) values (29, 10, 'Mechanical Systems Engineer', 'Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo.', 'Krajansumbermujur');
 insert into offer (id, company_id, title, description, city) values (30, 10, 'Quality Engineer', 'In sagittis dui vel nisl. Duis ac nibh.', 'Xingou');
 
-insert into application (id, candidate_id, offer_id) values (1, 1, 1);
-insert into application (id, candidate_id, offer_id) values (2, 1, 2);
-insert into application (id, candidate_id, offer_id) values (3, 2, 3);
-insert into application (id, candidate_id, offer_id) values (4, 2, 12);
-insert into application (id, candidate_id, offer_id) values (5, 2, 15);
-insert into application (id, candidate_id, offer_id) values (6, 3, 1);
-insert into application (id, candidate_id, offer_id) values (7, 3, 7);
-insert into application (id, candidate_id, offer_id) values (8, 3, 22);
-insert into application (id, candidate_id, offer_id) values (9, 4, 10);
-insert into application (id, candidate_id, offer_id) values (10, 4, 30);
-insert into application (id, candidate_id, offer_id) values (11, 5, 11);
-insert into application (id, candidate_id, offer_id) values (12, 6, 13);
-insert into application (id, candidate_id, offer_id) values (13, 7, 5);
-insert into application (id, candidate_id, offer_id) values (14, 8, 16);
-insert into application (id, candidate_id, offer_id) values (15, 9, 25);
-insert into application (id, candidate_id, offer_id) values (16, 10, 26);
-insert into application (id, candidate_id, offer_id) values (17, 11, 12);
-insert into application (id, candidate_id, offer_id) values (18, 11, 15);
-insert into application (id, candidate_id, offer_id) values (19, 12, 30);
-insert into application (id, candidate_id, offer_id) values (20, 12, 29);
-insert into application (id, candidate_id, offer_id) values (21, 13, 2);
-insert into application (id, candidate_id, offer_id) values (22, 14, 3);
-insert into application (id, candidate_id, offer_id) values (23, 14, 4);
-insert into application (id, candidate_id, offer_id) values (24, 15, 7);
-insert into application (id, candidate_id, offer_id) values (25, 15, 9);
-insert into application (id, candidate_id, offer_id) values (26, 16, 2);
-insert into application (id, candidate_id, offer_id) values (27, 17, 3);
-insert into application (id, candidate_id, offer_id) values (28, 18, 8);
-insert into application (id, candidate_id, offer_id) values (29, 18, 10);
-insert into application (id, candidate_id, offer_id) values (30, 19, 5);
-insert into application (id, candidate_id, offer_id) values (31, 20, 19);
+insert into offer_application (id, candidate_id, offer_id) values (1, 1, 1);
+insert into offer_application (id, candidate_id, offer_id) values (2, 1, 2);
+insert into offer_application (id, candidate_id, offer_id) values (3, 2, 3);
+insert into offer_application (id, candidate_id, offer_id) values (4, 2, 12);
+insert into offer_application (id, candidate_id, offer_id) values (5, 2, 15);
+insert into offer_application (id, candidate_id, offer_id) values (6, 3, 1);
+insert into offer_application (id, candidate_id, offer_id) values (7, 3, 7);
+insert into offer_application (id, candidate_id, offer_id) values (8, 3, 22);
+insert into offer_application (id, candidate_id, offer_id) values (9, 4, 10);
+insert into offer_application (id, candidate_id, offer_id) values (10, 4, 30);
+insert into offer_application (id, candidate_id, offer_id) values (11, 5, 11);
+insert into offer_application (id, candidate_id, offer_id) values (12, 6, 13);
+insert into offer_application (id, candidate_id, offer_id) values (13, 7, 5);
+insert into offer_application (id, candidate_id, offer_id) values (14, 8, 16);
+insert into offer_application (id, candidate_id, offer_id) values (15, 9, 25);
+insert into offer_application (id, candidate_id, offer_id) values (16, 10, 26);
+insert into offer_application (id, candidate_id, offer_id) values (17, 11, 12);
+insert into offer_application (id, candidate_id, offer_id) values (18, 11, 15);
+insert into offer_application (id, candidate_id, offer_id) values (19, 12, 30);
+insert into offer_application (id, candidate_id, offer_id) values (20, 12, 29);
+insert into offer_application (id, candidate_id, offer_id) values (21, 13, 2);
+insert into offer_application (id, candidate_id, offer_id) values (22, 14, 3);
+insert into offer_application (id, candidate_id, offer_id) values (23, 14, 4);
+insert into offer_application (id, candidate_id, offer_id) values (24, 15, 7);
+insert into offer_application (id, candidate_id, offer_id) values (25, 15, 9);
+insert into offer_application (id, candidate_id, offer_id) values (26, 16, 2);
+insert into offer_application (id, candidate_id, offer_id) values (27, 17, 3);
+insert into offer_application (id, candidate_id, offer_id) values (28, 18, 8);
+insert into offer_application (id, candidate_id, offer_id) values (29, 18, 10);
+insert into offer_application (id, candidate_id, offer_id) values (30, 19, 5);
+insert into offer_application (id, candidate_id, offer_id) values (31, 20, 19);
 
 

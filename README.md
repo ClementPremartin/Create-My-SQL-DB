@@ -4,15 +4,15 @@
 
 Démarrer une base de données MySql et un client Adminer accessible par l'hôte sur http://localhost:8090
 
-`docker compose up`
+```bash
+docker compose up
+```
 
 Accéder à la console CLI de la base de données :
 
-`docker exec -it checkpoint-db-db-1 bash`
-
-Puis se connecter à la base de donnée pour y injecter les tables et datas de script-to-create-db.sql :
-
-`mysql -h localhost -u user -p db`
+```bash
+docker compose exec db mysql -h localhost -u user -p db
+```
 
 # Checkpoint </br>
 
@@ -74,26 +74,47 @@ Dans Postgres, SQLite ou tout autre SGBD de ton choix, crée la base de données
 
 Écris ensuite les requêtes SQL permettant d'obtenir les données suivantes :
 
-- Toutes les offres d'emploi: </br>
-  `SELECT * from offer;`
-- Toutes les offres d'emploi d'une ville (Paris)</br>
-  `SELECT * from offer WHERE city='Paris';`
-- Les informations de tous candidats qui ont postulé à une offre précise</br>
-  `SELECT email, lastname, firstname, phone presentation FROM candidate `</br>
-  `LEFT JOIN application AS a ON a.candidate_id=candidate.id `</br>
-  `WHERE a.offer_id=2;`</br>
-- Les informations de tous les candidats qui ont postulé aux offres d'une entreprise </br>
-  `SELECT  email, lastname, firstname, phone presentation FROM candidate ` </br>
-  `INNER JOIN application AS a ON a.candidate_id=candidate.id `</br>
-  `INNER JOIN offer AS o ON a.offer_id=o.id `</br>
-  `INNER JOIN company ON o.company_id=company.id`</br>
-  `WHERE company.id=1;`</br>
+- Toutes les offres d'emploi:
+
+```sql
+SELECT * from offer;
+```
+
+- Toutes les offres d'emploi d'une ville (Paris)
+
+```sql
+SELECT * from offer WHERE city='Paris';
+```
+
+- Les informations de tous candidats qui ont postulé à une offre précise
+
+```sql
+SELECT email, lastname, firstname, phone presentation FROM candidate
+LEFT JOIN offer_application AS a ON a.candidate_id=candidate.id
+WHERE a.offer_id=2;
+```
+
+- Les informations de tous les candidats qui ont postulé aux offres d'une entreprise
+
+```sql
+SELECT  email, lastname, firstname, phone presentation FROM candidate
+INNER JOIN offer_application AS a ON a.candidate_id=candidate.id
+INNER JOIN offer AS o ON a.offer_id=o.id
+WHERE company_id.id=1;
+```
 
 et de modifier les données suivantes :
 
-- Modifier le numéro de téléphone et le texte de présentation d'un candidat </br>
-  `UPDATE candidate SET phone='0625635674', presentation='this is a nice presentation' WHERE candidate.id=1;`
+- Modifier le numéro de téléphone et le texte de présentation d'un candidat
+
+```sql
+UPDATE candidate SET phone='0625635674', presentation='this is a nice presentation' WHERE candidate.id=1;
+```
+
 - Supprimer toutes les offres d'une entreprise </br>
-  `SELECT * FROM offer o `</br>
-  `WHERE o.company_id=1;`
+
+```sql
+DELETE FROM offer
+WHERE company_id=1;
+```
 
